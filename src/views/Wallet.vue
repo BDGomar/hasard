@@ -65,7 +65,36 @@ function formatDate(iso) {
   })
 }
 
-onMounted(load)
+/**
+ * Vérifie automatiquement les recharges jamais finalisées (callback LigdiCash
+ * potentiellement injoignable, retour de paiement non détecté…).
+ * C'est le filet de sécurité qui garantit que le solde finit toujours par être crédité.
+ */
+async function autoVerify() {
+  const pending = recharges.value
+    .filter((r) => r.status === 'pending' || r.status === 'processing')
+    .slice(0, 3)
+  if (!pending.length) return
+
+  const results = await Promise.allSettled(
+    pending.map((r) => client.get(`/recharge/${r.id}/confirm`))
+  )
+
+  let credited = false
+  results.forEach((res, i) => {
+    if (res.status !== 'fulfilled') return
+    const data = res.value.data
+    const idx = recharges.value.findIndex((x) => x.id === pending[i].id)
+    if (idx >= 0) recharges.value[idx] = { ...recharges.value[idx], status: data.status }
+    if (data.status === 'completed') credited = true
+  })
+  if (credited) await auth.fetchUser()
+}
+
+onMounted(async () => {
+  await load()
+  await autoVerify()
+})
 </script>
 
 <template>

@@ -67,7 +67,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import client from '../api/client'
+import { initRecharge } from '../api/client'
 
 const emit = defineEmits(['close', 'done'])
 
@@ -111,7 +111,12 @@ async function pay() {
   errorMessage.value = ''
 
   try {
-    const data = await client.post('/recharge/init', { amount: total.value }).then((r) => r.data)
+    const data = await initRecharge(total.value)
+    if (data.recharge_id) {
+      // Filet de sécurité : si la return_url ne contient pas ?r=, le page de
+      // retour retrouvera quand même la recharge à vérifier.
+      localStorage.setItem('pending_recharge', String(data.recharge_id))
+    }
     if (data.pay_url) {
       window.location.href = data.pay_url
       return // la redirection charge une nouvelle page

@@ -42,6 +42,22 @@ const router = createRouter({
       meta: { auth: true },
     },
     {
+      // Retour du client après paiement LigdiCash (return_url).
+      path: '/paiement/succes',
+      name: 'payment-success',
+      component: () => import('../views/PaymentResult.vue'),
+      meta: { auth: true },
+      props: (route) => ({ outcome: 'success', rechargeId: route.query.r ?? null }),
+    },
+    {
+      // Retour du client après annulation sur la page LigdiCash (cancel_url).
+      path: '/paiement/annule',
+      name: 'payment-cancel',
+      component: () => import('../views/PaymentResult.vue'),
+      meta: { auth: true },
+      props: (route) => ({ outcome: 'cancel', rechargeId: route.query.r ?? null }),
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

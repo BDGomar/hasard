@@ -1,7 +1,11 @@
 import axios from 'axios'
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+  // En dev : serveur Laravel local. En production : même origine que le SPA
+  // (fonctionne aussi bien sur un domaine que sur une IP, http ou https).
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    (import.meta.env.DEV ? 'http://localhost:8000/api' : '/api'),
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -33,7 +37,13 @@ client.interceptors.response.use(
 export default client
 
 export async function initRecharge(amount) {
-  const { data } = await client.post('/recharge/init', { amount })
+  const { data } = await client.post('/recharge/init', {
+    amount,
+    // Origine du SPA : le backend s'en sert pour construire la return_url /
+    // cancel_url LigdiCash et renvoyer le client sur *cette* application
+    // (Vercel, domaine personnalisé, IP…) après le paiement.
+    origin: window.location.origin,
+  })
   return data
 }
 
