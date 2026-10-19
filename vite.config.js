@@ -4,15 +4,15 @@ import tailwindcss from '@tailwindcss/vite'
 
 // Deux cibles de build, choisies explicitement par le « mode » Vite :
 //
-//   npm run build          → mode « production » → cible Vercel :
-//                            SPA autonome, assets servis à la racine (« / »)
-//                            et sortie dans « dist » (ce qu'attend Vercel).
-//   npm run build:laravel  → mode « laravel » → cible Laravel :
-//                            assets servis depuis /build par public/build.
+//   npm run build          → cible Vercel (défaut) : SPA autonome, assets
+//                            servis à la racine (« / »), sortie dans « dist ».
+//   npm run build:laravel  → cible Laravel : assets servis depuis /build par
+//                            l'application Laravel du dépôt voisin
+//                            (../boules-game/public/build), en repli du SPA
+//                            déployé sur Vercel.
 //
-// On ne se fie surtout pas à la variable d'environnement VERCEL : elle n'est
-// présente que si le projet Vercel expose ses variables système, ce qui n'est
-// pas garanti (c'est ce qui a fait échouer le premier déploiement).
+// On ne se fie pas à la variable VERCEL : elle n'est présente que si le projet
+// Vercel expose ses variables système, ce qui n'est pas garanti.
 export default defineConfig(({ mode }) => {
   const forLaravel = mode === 'laravel' && !process.env.VERCEL
 
@@ -23,7 +23,8 @@ export default defineConfig(({ mode }) => {
       port: 5173,
     },
     build: {
-      outDir: forLaravel ? '../public/build' : 'dist',
+      // Adapter ce chemin si le dépôt backend n'est pas dans « ../boules-game ».
+      outDir: forLaravel ? '../boules-game/public/build' : 'dist',
       emptyOutDir: true,
       // Le manifeste n'est utile qu'au build servi par Laravel.
       manifest: forLaravel,
