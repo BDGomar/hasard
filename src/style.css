@@ -1,0 +1,445 @@
+@import "tailwindcss";
+
+/* ============================================================
+   BOULES — Design system
+   Palette : vert foncé • noir • jaune
+   ============================================================ */
+
+@theme {
+  /* Noirs */
+  --color-void: #040604;
+  --color-ink: #070C08;
+  --color-panel: #0A120C;
+
+  /* Verts foncés */
+  --color-forest: #0D2B1E;
+  --color-forest-light: #14523A;
+  --color-moss: #1B7A50;
+  --color-emerald-deep: #064E3B;
+
+  /* Jaune */
+  --color-gold: #facc15;
+  --color-gold-soft: #fde047;
+  --color-gold-dim: #a16207;
+
+  /* Typographie */
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-void);
+    color: #f5f7f5;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: #052e16;
+  }
+
+  /* Scrollbar discrète */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-forest-light) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-forest-light);
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-gold) 60%, transparent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ---------- Panneaux ---------- */
+  .panel {
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--color-forest) 55%, transparent), color-mix(in srgb, var(--color-ink) 92%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-moss) 30%, transparent);
+    border-radius: 1.25rem;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 24px 60px -30px rgba(0, 0, 0, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .panel-gold {
+    border-color: color-mix(in srgb, var(--color-gold) 35%, transparent);
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--color-gold) 8%, transparent), color-mix(in srgb, var(--color-ink) 92%, transparent));
+  }
+
+  /* ---------- Boutons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.85rem;
+    padding: 0.65rem 1.4rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    user-select: none;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--color-gold-soft), var(--color-gold));
+    color: #06120b;
+    box-shadow: 0 10px 30px -12px rgba(250, 204, 21, 0.55);
+  }
+  .btn-gold:hover:not(:disabled) {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 16px 36px -12px rgba(250, 204, 21, 0.65);
+  }
+  .btn-gold:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: rgba(245, 247, 245, 0.75);
+    border: 1px solid color-mix(in srgb, var(--color-forest-light) 70%, transparent);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--color-gold) 55%, transparent);
+    color: var(--color-gold-soft);
+    background: color-mix(in srgb, var(--color-gold) 6%, transparent);
+  }
+
+  /* ---------- Formulaires ---------- */
+  .label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(245, 247, 245, 0.5);
+    margin-bottom: 0.4rem;
+  }
+
+  .input {
+    width: 100%;
+    border-radius: 0.85rem;
+    background: color-mix(in srgb, var(--color-void) 80%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-forest-light) 65%, transparent);
+    padding: 0.7rem 1rem;
+    color: #f5f7f5;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input::placeholder {
+    color: rgba(245, 247, 245, 0.3);
+  }
+  .input:focus {
+    outline: none;
+    border-color: color-mix(in srgb, var(--color-gold) 70%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gold) 14%, transparent);
+  }
+  .input-error {
+    border-color: color-mix(in srgb, var(--color-gold) 65%, transparent);
+  }
+
+  .field-error {
+    color: var(--color-gold-soft);
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+  }
+
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    border-radius: 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+    background: color-mix(in srgb, var(--color-gold) 9%, transparent);
+    color: var(--color-gold-soft);
+    padding: 0.7rem 0.95rem;
+    font-size: 0.875rem;
+  }
+
+  /* ---------- Marque ---------- */
+  .brand-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .brand-dots i {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    box-shadow: 0 0 10px -2px currentColor;
+  }
+  .brand-dots i:nth-child(1) {
+    background: var(--color-moss);
+    color: var(--color-moss);
+  }
+  .brand-dots i:nth-child(2) {
+    background: var(--color-gold);
+    color: var(--color-gold);
+    width: 14px;
+    height: 14px;
+  }
+  .brand-dots i:nth-child(3) {
+    background: var(--color-emerald-deep);
+    color: var(--color-emerald-deep);
+  }
+
+  /* ---------- Pastilles / puces ---------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--color-forest-light) 70%, transparent);
+    background: color-mix(in srgb, var(--color-forest) 45%, transparent);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
+    color: rgba(245, 247, 245, 0.72);
+  }
+  .chip-gold {
+    border-color: color-mix(in srgb, var(--color-gold) 35%, transparent);
+    background: color-mix(in srgb, var(--color-gold) 10%, transparent);
+    color: var(--color-gold-soft);
+  }
+
+  /* ---------- Boutons-boules ---------- */
+  .ball-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 0.5rem;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-forest-light) 55%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 75%, transparent);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, background 0.2s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+  .ball-card:hover:not(:disabled) {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-moss) 75%, transparent);
+    background: color-mix(in srgb, var(--color-forest) 55%, transparent);
+  }
+  .ball-card:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .ball-card.is-selected {
+    border-color: color-mix(in srgb, var(--color-gold) 75%, transparent);
+    background: color-mix(in srgb, var(--color-gold) 8%, var(--color-ink));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-gold) 45%, transparent),
+      0 14px 30px -18px rgba(250, 204, 21, 0.7);
+    transform: translateY(-4px);
+  }
+
+  .ball {
+    position: relative;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ball-card:hover:not(:disabled) .ball {
+    transform: scale(1.08);
+  }
+  .ball-card.is-selected .ball {
+    transform: scale(1.1);
+  }
+
+  .ball-check {
+    position: absolute;
+    inset: auto 0 0 auto;
+    transform: translate(20%, 20%) scale(0);
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 999px;
+    background: var(--color-gold);
+    color: #06120b;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+  .ball-card.is-selected .ball-check {
+    transform: translate(20%, 20%) scale(1);
+  }
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -6%, 0) scale(1.12);
+  }
+}
+
+@keyframes balance-bump {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.18);
+    color: #fff;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ring-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-gold) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 22px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.anim-fade-up {
+  animation: fade-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-pop {
+  animation: pop-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-balance {
+  animation: balance-bump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+
+.anim-ring {
+  animation: ring-pulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.anim-orb {
+  animation: float-orb 16s ease-in-out infinite;
+}
+
+/* Favicon-style spinner */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Transitions de routes */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* Transitions des résultats */
+.result-enter-active {
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.result-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.result-enter-from,
+.result-leave-to {
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+}
+
+/* Accessibilité : animations réduites */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
