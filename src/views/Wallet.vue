@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import BrandMark from '../components/BrandMark.vue'
 import RechargeModal from '../components/RechargeModal.vue'
-import client, { getReferral } from '../api/client'
+import client from '../api/client'
 import { useAuthStore } from '../stores/auth'
 
 const auth = useAuthStore()
@@ -13,41 +13,7 @@ const loading = ref(true)
 const confirmingId = ref(null)
 const showRecharge = ref(false)
 
-// Parrainage : code, filleuls et gains.
-const referral = ref(null)
-const copied = ref(false)
-
 const balance = computed(() => auth.user?.balance ?? 0)
-
-// Lien à partager : n'importe quelle page sait lire ?ref=CODE.
-const referralLink = computed(() =>
-  referral.value?.code ? `${window.location.origin}/register?ref=${referral.value.code}` : ''
-)
-
-async function copyReferralLink() {
-  if (!referralLink.value) return
-  try {
-    await navigator.clipboard.writeText(referralLink.value)
-    copied.value = true
-    setTimeout(() => (copied.value = false), 2000)
-  } catch {
-    /* le presse-papiers peut être refusé : le code reste visible à recopier */
-  }
-}
-
-async function shareReferralLink() {
-  if (!referralLink.value) return
-  const text = `Rejoins-moi sur Boules Game, 2 500 F offerts pour jouer 🎉 ${referralLink.value}`
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: 'Boules Game', text, url: referralLink.value })
-      return
-    } catch {
-      /* partage annulé */
-    }
-  }
-  await copyReferralLink()
-}
 
 const totalRecharged = computed(() =>
   recharges.value.filter((r) => r.status === 'completed').reduce((a, r) => a + r.amount, 0)
@@ -65,14 +31,12 @@ const statusOf = (s) => STATUS[s] ?? { label: s, cls: 'border-white/15 bg-white/
 
 async function load() {
   loading.value = true
-  const [rec, bt, ref] = await Promise.allSettled([
+  const [rec, bt] = await Promise.allSettled([
     client.get('/recharges'),
     client.get('/bets'),
-    getReferral(),
   ])
   if (rec.status === 'fulfilled') recharges.value = rec.value.data.data ?? rec.value.data
   if (bt.status === 'fulfilled') bets.value = bt.value.data.data ?? bt.value.data
-  if (ref.status === 'fulfilled') referral.value = ref.value
   loading.value = false
 }
 
@@ -166,56 +130,6 @@ onMounted(async () => {
         </button>
         <p class="mt-3 text-center text-xs text-white/35">
           Paiement Mobile Money sécurisé via LigdiCash — Orange, Moov, MTN, Wave.
-        </p>
-      </section>
-
-      <!-- Parrainage : 500 F par filleul -->
-      <section v-if="referral" class="panel anim-fade-up mt-5 p-5" style="animation-delay: 0.04s">
-        <h2 class="mb-4 flex items-center gap-3 font-display text-lg font-semibold">
-          <span class="h-5 w-1 rounded-full bg-gold" aria-hidden="true" />
-          Parrainage
-        </h2>
-
-        <p class="text-sm text-white/55">
-          Invite tes amis : tu reçois
-          <span class="font-semibold text-gold">{{ referral.reward.toLocaleString('fr-FR') }} F</span>
-          par personne inscrite avec ton code.
-        </p>
-
-        <div class="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-gold/30 bg-gold/5 px-4 py-3">
-          <div class="min-w-0 flex-1">
-            <p class="label !mb-0.5">Mon code</p>
-            <p class="font-display text-xl font-bold tracking-[0.2em] text-gold">{{ referral.code }}</p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button class="btn btn-gold !px-4 !py-1.5 !text-sm" type="button" @click="copyReferralLink">
-              {{ copied ? '✓ Copié' : 'Copier le lien' }}
-            </button>
-            <button class="chip" type="button" @click="shareReferralLink">Partager</button>
-          </div>
-        </div>
-
-        <p class="mt-2 break-all text-xs text-white/30">{{ referralLink }}</p>
-
-        <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-          <div class="rounded-xl border border-forest-light/50 bg-void/50 px-2 py-3">
-            <p class="font-display text-lg font-bold">{{ referral.referrals_count }}</p>
-            <p class="text-xs text-white/40">Filleul{{ referral.referrals_count > 1 ? 's' : '' }}</p>
-          </div>
-          <div class="rounded-xl border border-forest-light/50 bg-void/50 px-2 py-3">
-            <p class="font-display text-lg font-bold">{{ referral.rewarded_count }}</p>
-            <p class="text-xs text-white/40">Prime{{ referral.rewarded_count > 1 ? 's' : '' }} versée{{ referral.rewarded_count > 1 ? 's' : '' }}</p>
-          </div>
-          <div class="rounded-xl border border-gold/30 bg-gold/5 px-2 py-3">
-            <p class="font-display text-lg font-bold text-gold">
-              {{ referral.earned.toLocaleString('fr-FR') }} F
-            </p>
-            <p class="text-xs text-white/40">Gagné</p>
-          </div>
-        </div>
-
-        <p v-if="referral.trigger === 'first_recharge'" class="mt-3 text-xs text-white/35">
-          Ta prime est versée dès que ton filleul effectue sa première recharge.
         </p>
       </section>
 
