@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import BrandMark from '../components/BrandMark.vue'
 import { useAuthStore } from '../stores/auth'
+import { clearReferralCode, getReferralCode } from '../utils/referral'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -14,7 +15,11 @@ const form = reactive({
   email: '',
   password: '',
   password_confirmation: '',
+  // Pré-rempli par un lien de parrainage (?ref=CODE).
+  referral_code: getReferralCode(),
 })
+// Affiche l'encart « parrainage » si un code est déjà présent.
+const hasReferral = ref(Boolean(getReferralCode()))
 const errors = ref({})
 const message = ref('')
 
@@ -25,6 +30,7 @@ async function submit() {
   message.value = ''
   try {
     await auth.register({ ...form })
+    clearReferralCode()
     await router.push({ name: 'home' })
   } catch (error) {
     errors.value = error.response?.data?.errors || {}
@@ -169,6 +175,39 @@ async function submit() {
               required
             />
           </div>
+        </div>
+
+        <!-- Parrainage : code facultatif (lien ?ref=CODE) -->
+        <div>
+          <label class="label" for="referral_code">
+            Code de parrainage <span class="text-white/30">(facultatif)</span>
+          </label>
+          <div class="relative">
+            <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7" />
+              <path d="M2 7h20v5H2zM12 22V7M12 7C12 4 10 2 7.5 2 5.5 2 4 3.5 4 5.5 4 7 5 7 6 7M12 7c0-3 2-5 4.5-5C18.5 2 20 3.5 20 5.5 20 7 19 7 18 7" />
+            </svg>
+            <input
+              id="referral_code"
+              v-model.trim="form.referral_code"
+              class="input pl-10 uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal"
+              :class="{ 'input-error': errors.referral_code }"
+              type="text"
+              name="referral_code"
+              placeholder="Ex : BGT4K9Q2"
+              maxlength="12"
+              autocapitalize="characters"
+              autocomplete="off"
+              @input="hasReferral = false"
+            />
+          </div>
+          <p v-if="errors.referral_code" class="field-error">{{ errors.referral_code[0] }}</p>
+          <p v-else-if="hasReferral" class="mt-2 text-xs text-gold/80">
+            🎁 Code détecté — ton parrain touchera 500 F à ton inscription.
+          </p>
+          <p v-else class="mt-2 text-xs text-white/35">
+            Un ami t'a parrainé ? Saisis son code.
+          </p>
         </div>
 
         <button class="btn btn-gold w-full" type="submit" :disabled="loading">

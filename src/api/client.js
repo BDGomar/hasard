@@ -51,3 +51,9 @@ export async function confirmRecharge(rechargeId) {
   const { data } = await client.get(`/recharge/${rechargeId}/confirm`)
   return data
 }
+
+/** Parrainage : code du joueur, nombre de filleuls et gains. */
+export async function getReferral() {
+  const { data } = await client.get('/referral')
+  return data
+}

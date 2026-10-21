@@ -49,3 +49,17 @@ sont les URLs de retour LigdiCash : elles interrogent le backend (endpoint
 `confirm`, en boucle) avant d'afficher le résultat et de rafraîchir le solde.
 `initRecharge()` (`src/api/client.js`) transmet l'origine du SPA au backend afin
 que le client revienne sur *cette* application après paiement.
+
+## Parrainage
+
+Chaque joueur reçoit un code unique. Le lien de partage
+`https://<app>/register?ref=CODE` est capté par `src/utils/referral.js` (appelé
+au démarrage dans `src/main.js`) et conservé jusqu'à l'inscription, où le code
+est envoyé au backend (`referral_code`). Le parrain touche **500 F** par filleul
+(montant et moment du versement réglés côté backend :
+`REFERRAL_REWARD` / `REFERRAL_TRIGGER`).
+
+- `src/views/Register.vue` : champ « Code de parrainage » pré-rempli.
+- `src/views/Wallet.vue` : carte « Parrainage » (code, lien, filleuls, gains).
+- API : `GET /api/referral` → `{ code, reward, trigger, referrals_count, rewarded_count, earned }`.
+
