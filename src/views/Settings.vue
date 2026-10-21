@@ -119,16 +119,19 @@ async function logout() {
           par personne inscrite avec ton code.
         </p>
 
-        <div class="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-gold/30 bg-gold/5 px-4 py-3">
-          <div class="min-w-0 flex-1">
-            <p class="label !mb-0.5">Mon code</p>
-            <p class="font-display text-xl font-bold tracking-[0.2em] text-gold">{{ referral.code }}</p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button class="btn btn-gold !px-4 !py-1.5 !text-sm" type="button" @click="copyReferralLink">
-              {{ copied ? '✓ Copié' : 'Copier le lien' }}
+        <div class="mt-4 rounded-xl border border-gold/30 bg-gold/5 px-4 py-4">
+          <p class="label !mb-1">Mon code</p>
+          <p class="font-display text-2xl font-bold leading-none tracking-[0.15em] text-gold break-all">
+            {{ referral.code }}
+          </p>
+
+          <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+            <button class="btn btn-gold flex-1 !px-4 !py-2 !text-sm" type="button" @click="copyReferralLink">
+              {{ copied ? '✓ Lien copié' : 'Copier le lien' }}
             </button>
-            <button class="chip" type="button" @click="shareReferralLink">Partager</button>
+            <button class="chip flex-1 justify-center !py-2" type="button" @click="shareReferralLink">
+              Partager
+            </button>
           </div>
         </div>
 
