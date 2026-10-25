@@ -392,3 +392,4 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+// updated
